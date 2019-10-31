@@ -2,7 +2,17 @@
            (replacing the palceholder with your Github name):
            https://api.github.com/users/<your name>
 */
+const cards = document.querySelector('.cards')
 
+ const profilePromise = axios.get('https://api.github.com/users/marielapg')
+ profilePromise
+   .then(data => {
+     cards.appendChild(createCard(data.data))
+   })
+
+   .catch(error => {
+     console.log('Error connecting to API', error)
+   })
 /* Step 2: Inspect and study the data coming back, this is YOUR 
    github info! You will need to understand the structure of this 
    data in order to use it to build your component function 
@@ -23,9 +33,31 @@
           Using that array, iterate over it, requesting data for each user, creating a new card for each
           user, and adding that card to the DOM.
 */
+const followersPromise = axios.get('https://api.github.com/users/marielapg/followers')
+ followersPromise
+   .then(data => {
+     
+     const profiles = data.data
+     profiles.forEach(profile => {
+       console.log(profile)
+       const profilePromise = axios.get(profile.url)
+     })
+    })
+       profilePromise
+         .then(data => {
+           cards.appendChild(createCard(data.data))
+         })
 
-const followersArray = [];
+ const followersArray = [];
+  //        catch(error => {
+  //          console.log('Error connecting to API', error)
+  //        })
+  //    })
+  //  })
 
+  //  .catch(error => {
+  //    console.log('Error connecting to API', error)
+  //  })
 /* Step 3: Create a function that accepts a single object as its only argument,
           Using DOM methods and properties, create a component that will return the following DOM element:
 
@@ -45,11 +77,47 @@ const followersArray = [];
 </div>
 
 */
+function createCard(obj) {
+  const card = document.createElement('div')
+  const cardImg = document.createElement('img')
+  const cardInfo = document.createElement('div')
+  const cardName = document.createElement('h3')
+  const cardUsername = document.createElement('p')
+  const cardLocation = document.createElement('p')
+  const cardProfile = document.createElement('p')
+  const cardProfileLink = document.createElement('a')
+  const cardFollowers = document.createElement('p')
+  const cardFollowing = document.createElement('p')
+  const cardBio = document.createElement('p')
 
-/* List of LS Instructors Github username's: 
-  tetondan
-  dustinmyers
-  justsml
-  luishrd
-  bigknell
-*/
+  card.classList.add('card')
+  cardInfo.classList.add('card-info')
+  cardName.classList.add('name')
+  cardUsername.classList.add('username')
+
+  cardImg.src = obj.avatar_url
+  cardName.textContent = obj.name
+  cardUsername.textContent = obj.login
+  cardLocation.textContent = obj.location
+  cardProfile.textContent = `Profile: ${obj.html_url}`
+  cardProfileLink.href = obj.html_url
+  cardFollowers.textContent = obj.followers
+  cardFollowing.textContent = obj.following
+  cardBio.textContent = obj.bio
+
+  card.appendChild(cardImg)
+  card.appendChild(cardInfo)
+
+  cardInfo.appendChild(cardName)
+  cardInfo.appendChild(cardUsername)
+  cardInfo.appendChild(cardLocation)
+  cardInfo.appendChild(cardProfile)
+  cardInfo.appendChild(cardFollowers)
+  cardInfo.appendChild(cardFollowing)
+  cardInfo.appendChild(cardBio)
+
+  cardProfile.appendChild(cardProfileLink)
+
+  return card
+}
+
